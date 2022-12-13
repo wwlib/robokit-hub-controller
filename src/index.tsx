@@ -3,13 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import './css/bootstrap.min.css';
+import './css/font-awesome.min.css';
+import Model from './model/Model';
+
+const model: Model = new Model();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <App model={model}/>
   </React.StrictMode>
 );
 
