@@ -1,8 +1,5 @@
 import { EventEmitter } from "events";
 import { CommandFactory, CommandProcessor, RCSCommand, RCSCommandAck, SynchronizedClock, TimeData } from 'robokit-command-system';
-// import AudioFxManager from "../audio/AudioFxManager";
-// import WwMusicController from "../ww/WwMusicController";
-// import ExampleCommandExecutor from "./ExampleCommandExecutor";
 
 const axios = require('axios');
 const { io } = require("socket.io-client");
@@ -29,7 +26,6 @@ export default class CognitiveHubClientController extends EventEmitter {
     private _connected: boolean;
 
     private _syncOffset: number
-    // private _commandExecutor: ExampleCommandExecutor;
     private _synchronizedClock: SynchronizedClock | undefined;
 
     constructor(serviceUrl: string, authUrl: string, accountId: string, password: string) {
@@ -39,7 +35,6 @@ export default class CognitiveHubClientController extends EventEmitter {
         this._accountId = accountId;
         this._password = password;
         this._connected = false;
-        // this._commandExecutor = new ExampleCommandExecutor();
         this._syncOffset = 0;
         this._synchronizedClock = new SynchronizedClock();
         this._synchronizedClock.on('1sec', this.onSynchronizedClockUpdate)
@@ -107,9 +102,6 @@ export default class CognitiveHubClientController extends EventEmitter {
         if (this._synchronizedClock) {
             this._synchronizedClock.onSyncOffsetChanged(offset)
         }
-        // if (this._commandExecutor) {
-        //     this._commandExecutor.syncOffset = offset
-        // }
         const commandData = {
             id: 'tbd',
             type: 'sync',
@@ -182,49 +174,64 @@ export default class CognitiveHubClientController extends EventEmitter {
 
             this._socket.on("connect", () => {
                 this._connected = true;
-                console.log('CognitiveHubClientController: socket connected:', this._socket.id)
+                this.log('CognitiveHubClientController: socket connected:', this._socket.id)
             });
 
             this._socket.on('disconnect', () => {
-                console.log('CognitiveHubClientController: on disconnect. closing...');
+                this.log('CognitiveHubClientController: on disconnect. closing...');
                 this._socket = undefined
                 this.dispose()
             });
 
-            // CommandProcessor.getInstance().setCommandExecutor(this._commandExecutor)
-            // CommandProcessor.getInstance().on('commandCompleted', (commandAck: RCSCommandAck) => {
-            //     console.log(`command completed:`, commandAck)
-            //     if (this._socket) {
-            //         this._socket.emit('command', commandAck)
-            //     } else {
-            //         console.log(`on commandCompleted: _socket is undefined.`, this)
-            //     }
-            // })
-
             this._socket.on('command', (command: RCSCommand) => {
-                console.log('CognitiveHubClientController: command', command);
+                this.log('CognitiveHubClientController: command', command);
                 // const synchronizedTime = this._synchronizedClock ? this._synchronizedClock.synchronizedTime : -1
                 if (command.name === 'base64Photo' && command.payload) { 
                     this.emit('base64Photo', command.payload) // will be received by RookitHub.tsx
                 }
             });
 
-            this._socket.on('message', function (data: any) {
-                console.log('CognitiveHubClientController: on message', data);
+            this._socket.on('message', (data: any) => {
+                this.log('CognitiveHubClientController: on message', data);
             });
 
-            this._socket.on('asrSOS', function () {
-                console.log(`CognitiveHubClientController: asrSOS`);
+            // ASR
+
+            this._socket.on('asrSOS', () => {
+                this.log(`CognitiveHubClientController: asrSOS`);
             });
 
-            this._socket.on('asrResult', function (data: any) {
-                console.log(`CognitiveHubClientController: asrResult`, data);
+            this._socket.on('asrResult', (data: any) => {
+                this.log(`CognitiveHubClientController: asrResult`, data);
             });
 
             this._socket.on('asrEnded', (data: any) => {
-                console.log(`CognitiveHubClientController: asrEnded`, data);
+                this.log(`CognitiveHubClientController: asrEnded`, data);
                 this.emit('asrEnded', data);
             });
+
+            // TTS
+
+            this._socket.on('ttsAudioStart', (data: any) => {
+                this.log(`ttsAudioStart`, data);
+                this.emit('ttsAudioStart', data);
+            });
+
+            this._socket.on('ttsAudio', (data: any) => {
+                console.log(`ttsAudio`, data);
+                this.emit('ttsAudio', data);
+            });
+
+            this._socket.on('ttsAudioEnd', (data: any) => {
+                this.log(`ttsAudioEnd`, data);
+                this.emit('ttsAudioEnd', data);
+            });
+
+            this._socket.on('ttsAudioError', (data: any) => {
+                this.log(`ttsAudioError`, data);
+                this.emit('ttsAudioError', data);
+            });
+
         } else {
             throw new Error('Invalid or undefined access_token and/or serviceUrl.')
         }
@@ -232,11 +239,6 @@ export default class CognitiveHubClientController extends EventEmitter {
 
     onSynchronizedClockUpdate = (timeData: TimeData) => {
         let audioContextElapsedTime = 0
-        // const musicController: WwMusicController = AudioFxManager.getInstance().musicController
-        // if (musicController && musicController.midiToMediaPlayer && musicController.midiToMediaPlayer.acClock) {
-        //     audioContextElapsedTime = musicController.midiToMediaPlayer.acClock.calculatedAcElapsedTime
-        //     audioContextElapsedTime = Math.round(audioContextElapsedTime * 1000) / 1000
-        // }
         this.emit('clockUpdate', { timeData, audioContextElapsedTime })
     }
 
@@ -247,6 +249,11 @@ export default class CognitiveHubClientController extends EventEmitter {
         } else {
             console.log(`CognitiveHubClientController: sendCommand: _socket is undefined.`)
         }
+    }
+
+    log(...args:any) {
+        console.log(args)
+        this.emit('statusMessage', args)
     }
 
     dispose() {
@@ -266,6 +273,5 @@ export default class CognitiveHubClientController extends EventEmitter {
             this._synchronizedClock = undefined
         }
         this.removeAllListeners()
-        // CommandProcessor.getInstance().removeAllListeners() // TODO: remove specific listeners
     }
 }

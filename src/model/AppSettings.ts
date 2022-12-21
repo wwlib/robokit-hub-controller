@@ -10,8 +10,8 @@ export interface CognitiveHubOptions {
 const LOCAL_STORAGE_ITEM_NAME = 'robokit-hub-controller'
 
 const defaultCognitiveHubOptions: CognitiveHubOptions = {
-    serviceUrl: 'http://reasongraph.com:8082/', // 'http://localhost:8082/', // 'http://reasongraph.com:8082/',
-    authUrl: 'http://reasongraph.com:8082/auth', // 'http://localhost:8082/auth', // 'http://reasongraph.com:8082/auth',
+    serviceUrl: 'http://localhost:8082/', // 'http://reasongraph.com:8082/',
+    authUrl: 'http://localhost:8082/auth', // 'http://reasongraph.com:8082/auth',
     username: 'controller1',
     password: 'controller1',
 }
