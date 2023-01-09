@@ -1,4 +1,4 @@
-.RobokitHub {
+.RobokitHubController {
     background-color: #282c34;
     min-height: 100vh;
     display: flex;
@@ -7,20 +7,22 @@
     justify-content: center;
     font-size: 18px;
     color: white;
+    padding: 12px;
   }
 
-  .RobokitHub-row {
+  .RobokitHubController-row {
     margin-top: 6px;
-    width: 600px;
+    width: 100%;
+    max-width: 600px;
   }
 
-  .RobokitHub-messages {
+  .RobokitHubController-messages {
     background-color: #282c34;
     font-size: 14px;
     width: 100%;
   }
 
-  .RobokitHub-messages textarea {
+  .RobokitHubController-messages textarea {
     margin: auto;
     padding: 8px;
     box-sizing: border-box;
@@ -28,7 +30,7 @@
     text-align: left;
   }
 
-  .RobokitHub-photo img {
+  .RobokitHubController-photo img {
     width: 100%;
   }
   

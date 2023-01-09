@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
 import Model from './model/Model';
-import RobokitHub from './components/RobokitHub/RobokitHub';
+import RobokitHubController from './components/RobokitHubController/RobokitHubController';
 
 function App({model}: {model: Model}) {
   return (
     <div className="App">
-      <RobokitHub model={model}/>
+      <RobokitHubController model={model}/>
     </div>
   );
 }

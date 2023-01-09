@@ -1,28 +1,28 @@
 import { EventEmitter } from 'events';
 import Log from '../utils/Log';
 import log from './log';
-// import AppSettings, { AppSettingsOptions } from './AppSettings';
+import AppSettings, { AppSettingsOptions } from './AppSettings';
 import CognitiveHubClientController from './CognitiveHubClientController';
 
 
 export default class Model extends EventEmitter{
 
   public log: Log;
-  // public settings: AppSettings;
+  public settings: AppSettings;
 
   private _cognitiveHubClientController: CognitiveHubClientController | undefined;
 
   constructor() {
     super()
     this.log = log;
-    // this.settings = new AppSettings();
+    this.settings = new AppSettings();
   }
 
-  // setAppSettings(settings: AppSettingsOptions): void {
-  //   this.log.debug(`setAppSettings:`, settings);
-  //   this.settings.init(settings);
-  //   this.settings.saveToLocalStorage();
-  // }
+  setAppSettings(settings: AppSettingsOptions): void {
+    this.log.debug(`setAppSettings:`, settings);
+    this.settings.init(settings);
+    this.settings.saveToLocalStorage();
+  }
 
   //// CognitiveHub
 

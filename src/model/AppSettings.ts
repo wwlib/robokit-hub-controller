@@ -1,28 +1,30 @@
 // import { CognitiveServicesConfig, CognitiveServicesConfigOptions } from "cognitiveserviceslib"
 
-export interface CognitiveHubOptions {
+export interface CognitiveHubControllerOptions {
     serviceUrl: string;
     authUrl: string;
-    username: string;
-    password: string;
+    controllerAccountId: string;
+    controllerPassword: string;
+    targetedAccountId: string;
 }
 
 const LOCAL_STORAGE_ITEM_NAME = 'robokit-hub-controller'
 
-const defaultCognitiveHubOptions: CognitiveHubOptions = {
+const defaultCognitiveHubOptions: CognitiveHubControllerOptions = {
     serviceUrl: 'http://localhost:8082/', // 'http://reasongraph.com:8082/',
     authUrl: 'http://localhost:8082/auth', // 'http://reasongraph.com:8082/auth',
-    username: 'controller1',
-    password: 'controller1',
+    controllerAccountId: 'controller1',
+    controllerPassword: 'controller1',
+    targetedAccountId: 'robot9',
 }
 
 export interface AppSettingsOptions { // extends CognitiveServicesConfigOptions {
-    CognitiveHubOptions: CognitiveHubOptions
+    CognitiveHubControllerOptions: CognitiveHubControllerOptions
 }
 
 export default class AppSettings { // extends CognitiveServicesConfig {
 
-    public CognitiveHubOptions: CognitiveHubOptions = defaultCognitiveHubOptions;
+    public CognitiveHubControllerOptions: CognitiveHubControllerOptions = defaultCognitiveHubOptions;
 
     constructor(options?: AppSettingsOptions) {
         // super();
@@ -44,10 +46,10 @@ export default class AppSettings { // extends CognitiveServicesConfig {
         console.log(`AppSettingsOptions: initWithData`, options);
         // super.initWithData(options)
 
-        if (options.CognitiveHubOptions) {
-            this.CognitiveHubOptions = options.CognitiveHubOptions;
+        if (options.CognitiveHubControllerOptions) {
+            this.CognitiveHubControllerOptions = options.CognitiveHubControllerOptions;
         } else {
-            this.CognitiveHubOptions = defaultCognitiveHubOptions;
+            this.CognitiveHubControllerOptions = defaultCognitiveHubOptions;
         }
     }
 
@@ -73,7 +75,7 @@ export default class AppSettings { // extends CognitiveServicesConfig {
             if (settingsText) {
                 try {
                     const settings = JSON.parse(settingsText);
-                    this.initWithData(settings as CognitiveHubOptions) // CognitiveServicesConfigOptions);
+                    this.initWithData(settings as CognitiveHubControllerOptions) // CognitiveServicesConfigOptions);
                     result = true
                 } catch (error) {
                     console.log(`loadFromLocalStorage`, error);
@@ -85,7 +87,7 @@ export default class AppSettings { // extends CognitiveServicesConfig {
 
     get json(): any {
         let json: any = {
-            CognitiveHub: this.CognitiveHubOptions,
+            CognitiveHubControllerOptions: this.CognitiveHubControllerOptions,
         };
         return json;
     }
